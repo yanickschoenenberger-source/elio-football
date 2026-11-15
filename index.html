@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071522">
+<title>ELIO FOOTBALL — Penalty Arena</title>
+<style>
+:root{--bg:#071522;--panel:#102438;--panel2:#18344a;--line:#29465d;--text:#f3f7fa;--muted:#9db0bf;--lime:#c5f45b;--gold:#f6c65b;--blue:#58a9ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#244c66 0,#0b1e2d 45%,#06111b 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh;padding:18px}
+.shell{max-width:1120px;margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff20;padding:10px 2px 18px;gap:16px}.brand{font-weight:1000;letter-spacing:2px;font-size:20px}.brand span{color:var(--lime)}.season{font-size:11px;letter-spacing:1.5px;color:var(--muted);font-weight:800}
+.hero{padding:24px 0 18px}.eyebrow{color:var(--lime);font-size:11px;letter-spacing:2.3px;font-weight:900}.hero h1{font-size:clamp(30px,5vw,48px);line-height:1;margin:9px 0 8px;letter-spacing:-1.8px}.hero p{color:var(--muted);margin:0;font-size:14px}
+.layout{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:stretch}.panel{background:linear-gradient(145deg,#122b40,#0d2031);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 18px 50px #0003}.panel h2{font-size:14px;text-transform:uppercase;letter-spacing:1.2px;margin:0 0 14px;color:#dce8ef}.fieldlabel{display:block;font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);font-weight:900;margin:16px 0 8px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:#071522;padding:4px;border-radius:11px;gap:4px}.tabs button{border:0;border-radius:8px;background:transparent;color:var(--muted);padding:10px;font-weight:900;cursor:pointer}.tabs button.active{background:var(--lime);color:#142331}
+select{width:100%;background:#071522;color:white;border:1px solid #34516a;border-radius:10px;padding:12px;font-size:14px;font-weight:750;outline:none}
+.player-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.player{background:#0a1b2a;border:1px solid #2a465d;color:#dbe7ef;border-radius:10px;padding:10px;text-align:left;cursor:pointer;min-height:56px}.player small{display:block;color:#8299aa;font-size:10px;margin-top:3px}.player.selected{border-color:var(--lime);background:#263c2b;box-shadow:inset 0 0 0 1px var(--lime)}
+.kit{display:flex;align-items:center;gap:12px;background:#0a1b2a;border:1px solid #29465d;border-radius:12px;padding:12px;margin-top:15px}.shirt{width:43px;height:48px;clip-path:polygon(23% 0,39% 0,50% 12%,61% 0,77% 0,100% 25%,83% 40%,76% 31%,76% 100%,24% 100%,24% 31%,17% 40%,0 25%);background:var(--kit,#e8edf1);position:relative}.kit b{font-size:13px}.kit small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.action{width:100%;margin-top:16px;border:0;border-radius:11px;padding:14px;background:var(--lime);color:#142331;font-weight:1000;letter-spacing:1px;cursor:pointer;font-size:14px;box-shadow:0 4px 0 #8eae3d}.action:disabled{opacity:.4;cursor:not-allowed}
+.arena{padding:0;overflow:hidden;display:flex;flex-direction:column}.arena-head{padding:16px 18px;display:flex;justify-content:space-between;align-items:center;background:#10283b;border-bottom:1px solid var(--line);gap:10px}.match-title{font-size:12px;font-weight:900;letter-spacing:1px}.match-sub{font-size:10px;color:var(--muted);margin-top:4px}.scoreboard{display:flex;gap:15px;align-items:center;font-weight:900}.scoreboard div{text-align:center}.scoreboard strong{font-size:23px}.scoreboard small{display:block;color:var(--muted);font-size:9px;letter-spacing:1px}
+.canvas-wrap{position:relative;background:#153d31;flex:1;min-height:400px}canvas{display:block;width:100%;height:100%;min-height:400px;touch-action:manipulation}
+.arena-foot{padding:14px 18px;background:#0c2030;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.status{font-size:13px;font-weight:800}.status span{color:var(--lime)}.shoot{border:0;background:var(--lime);color:#122333;border-radius:9px;padding:12px 20px;font-weight:1000;letter-spacing:1px;cursor:pointer}.shoot:disabled{opacity:.35}
+.tip{font-size:11px;color:var(--muted);line-height:1.5;margin-top:14px}
+.overlay{position:absolute;inset:0;background:#03101dcc;display:flex;align-items:center;justify-content:center;padding:20px}.modal{background:#10283b;border:1px solid #45647b;border-radius:18px;padding:25px;text-align:center;max-width:380px;width:100%;box-shadow:0 20px 70px #0008}.modal h2{margin:0 0 8px;font-size:26px}.modal p{font-size:13px;color:#b6c5d0;line-height:1.5}.modal .action{margin-top:8px}
+@media(max-width:800px){body{padding:10px}.layout{grid-template-columns:1fr}.panel{order:1}.arena{order:2}.canvas-wrap{min-height:330px}canvas{min-height:330px}.hero{padding:20px 0}.topbar{padding-bottom:13px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="topbar"><div class="brand">ELIO <span>FOOTBALL</span></div><div class="season">PENALTY ARENA · SEASON 26/27</div></header>
+<section class="hero"><div class="eyebrow">THE BIG MATCH STARTS HERE</div><h1>Own the moment.</h1><p>Wähle dein Team. Wähle deinen Star. Und verwandle den Elfmeter.</p></section>
+<div class="layout">
+<aside class="panel">
+<h2>01 / Team selection</h2>
+<div class="tabs"><button id="clubsTab" class="active">CLUBS</button><button id="nationsTab">NATIONALTEAMS</button></div>
+<label class="fieldlabel" for="teamSelect">Dein Team</label><select id="teamSelect"></select>
+<label class="fieldlabel">Wähle deinen Schützen</label><div class="player-grid" id="players"></div>
+<div class="kit"><div class="shirt" id="shirt"></div><div><b id="kitName">Dein Match-Kit</b><small id="kitPlayer">Spieler auswählen</small></div></div>
+<button class="action" id="startBtn">MATCH STARTEN →</button>
+<div class="tip">Spieler-Auswahl: kuratierte aktuelle Stars. Kader und Verfügbarkeit können sich während der Saison ändern.</div>
+</aside>
+<section class="panel arena">
+<div class="arena-head"><div><div class="match-title">PENALTY SHOOTOUT</div><div class="match-sub" id="matchSub">STADIUM ARENA · NIGHT MODE</div></div><div class="scoreboard"><div><strong id="goals">0</strong><small>GOALS</small></div><div><strong id="attempt">0/5</strong><small>SHOTS</small></div></div></div>
+<div class="canvas-wrap"><canvas id="pitch" width="900" height="510"></canvas>
+<div class="overlay" id="introOverlay"><div class="modal"><div style="font-size:38px">🏟️</div><h2>Ready for kickoff?</h2><p>Wähle links deinen Club oder dein Land und deinen Lieblingsspieler. Dann startest du dein Penalty-Shootout.</p></div></div>
+<div class="overlay" id="resultOverlay" hidden><div class="modal"><div style="font-size:38px" id="resultIcon">🏆</div><h2 id="resultTitle">Full time!</h2><p id="resultCopy">Dein Ergebnis</p><button class="action" id="replayBtn">REMATCH ↻</button></div></div>
+</div>
+<div class="arena-foot"><div class="status" id="status"> <span>●</span> Wähle dein Team und starte das Match.</div><button class="shoot" id="shootBtn" disabled>SHOOT ⚽</button></div>
+</section>
+</div>
+</div>
+<script>
+(()=>{
+const squads={
+clubs:{
+"FC Barcelona":{badge:"FCB",color:"#a50044",players:[["Lamine Yamal","RW · 10"],["Pedri","CM · 8"],["Raphinha","LW · 11"],["Fermín López","AM · 16"],["Jules Koundé","RB · 23"]]},
+"Real Madrid":{badge:"RMA",color:"#e8e8e8",players:[["Kylian Mbappé","FW"],["Vinícius Júnior","LW"],["Jude Bellingham","AM"],["Federico Valverde","CM"],["Rodrygo","FW"]]},
+"Manchester City":{badge:"MCI",color:"#69b9e8",players:[["Erling Haaland","ST · 9"],["Phil Foden","AM · 47"],["Rayan Cherki","AM · 10"],["Jérémy Doku","LW · 11"],["Rúben Dias","CB · 3"]]},
+"FC Bayern München":{badge:"FCB",color:"#d71920",players:[["Harry Kane","ST · 9"],["Jamal Musiala","AM · 10"],["Michael Olise","RW · 17"],["Luis Díaz","LW · 14"],["Joshua Kimmich","CM · 6"]]},
+"Borussia Dortmund":{badge:"BVB",color:"#f5dc00",players:[["Serhou Guirassy","ST · 9"],["Jobe Bellingham","CM"],["Maximilian Beier","FW"],["Carney Chukwuemeka","AM"],["Julian Ryerson","RB"]]},
+"Inter":{badge:"INT",color:"#1685c7",players:[["Lautaro Martínez","ST · 10"],["Marcus Thuram","FW · 9"],["Nicolò Barella","CM · 23"],["Hakan Çalhanoğlu","CM · 20"],["Manuel Akanji","CB · 25"]]},
+"Arsenal":{badge:"ARS",color:"#d71920",players:[["Bukayo Saka","RW"],["Declan Rice","CM"],["Martin Ødegaard","AM"],["Viktor Gyökeres","ST"],["Gabriel Martinelli","LW"]]},
+"Liverpool":{badge:"LIV",color:"#c8102e",players:[["Mohamed Salah","FW"],["Virgil van Dijk","CB"],["Florian Wirtz","AM"],["Alexander Isak","ST"],["Dominik Szoboszlai","CM"]]},
+"Paris Saint-Germain":{badge:"PSG",color:"#1d3c75",players:[["Ousmane Dembélé","FW"],["Désiré Doué","AM"],["Vitinha","CM"],["Khvicha Kvaratskhelia","LW"],["Achraf Hakimi","RB"]]}
+},
+nations:{
+"Schweiz":{badge:"SUI",color:"#d71920",players:[["Gregor Kobel","GK"],["Manuel Akanji","CB"],["Granit Xhaka","CM"],["Remo Freuler","CM"],["Breel Embolo","FW"]]},
+"Deutschland":{badge:"GER",color:"#eeeeee",players:[["Jamal Musiala","AM"],["Florian Wirtz","AM"],["Kai Havertz","FW"],["Joshua Kimmich","CM"],["Antonio Rüdiger","CB"]]},
+"Frankreich":{badge:"FRA",color:"#244a9b",players:[["Kylian Mbappé","FW"],["Ousmane Dembélé","FW"],["Michael Olise","AM"],["Aurélien Tchouaméni","CM"],["William Saliba","CB"]]},
+"Spanien":{badge:"ESP",color:"#e9b62f",players:[["Lamine Yamal","FW"],["Pedri","CM"],["Nico Williams","LW"],["Rodri","CM"],["Dani Olmo","AM"]]},
+"England":{badge:"ENG",color:"#eeeeee",players:[["Jude Bellingham","AM"],["Bukayo Saka","RW"],["Harry Kane","ST"],["Phil Foden","AM"],["Declan Rice","CM"]]},
+"Portugal":{badge:"POR",color:"#16814b",players:[["Cristiano Ronaldo","FW"],["Bruno Fernandes","AM"],["Bernardo Silva","AM"],["Rafael Leão","LW"],["Vitinha","CM"]]},
+"Argentinien":{badge:"ARG",color:"#83c8e8",players:[["Lionel Messi","FW"],["Julián Álvarez","ST"],["Lautaro Martínez","ST"],["Enzo Fernández","CM"],["Alexis Mac Allister","CM"]]},
+"Brasilien":{badge:"BRA",color:"#e6cf32",players:[["Vinícius Júnior","LW"],["Raphinha","RW"],["Rodrygo","FW"],["Bruno Guimarães","CM"],["Alisson","GK"]]}
+}};
+let type="clubs",team="FC Barcelona",player="Lamine Yamal",selected=false,goals=0,shots=0,live=false,aim={x:450,y:175},ball=null,keeperX=450,keeperDir=1;
+const $=id=>document.getElementById(id),canvas=$("pitch"),ctx=canvas.getContext("2d");
+function current(){return squads[type][team]}
+function populateTeams(){const sel=$("teamSelect");sel.innerHTML="";Object.keys(squads[type]).forEach(t=>{let o=document.createElement("option");o.value=t;o.textContent=t;sel.append(o)});team=Object.keys(squads[type])[0];populatePlayers()}
+function populatePlayers(){const data=current();$("players").innerHTML="";data.players.forEach(([name,pos],i)=>{let b=document.createElement("button");b.className="player"+(i===0?" selected":"");b.innerHTML=`${name}<small>${pos}</small>`;b.onclick=()=>{document.querySelectorAll(".player").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");player=name;$("kitPlayer").textContent=name+" · "+pos};$("players").append(b)});player=data.players[0][0];$("shirt").style.setProperty("--kit",data.color);$("kitName").textContent=team+" · "+data.badge;$("kitPlayer").textContent=player+" · "+data.players[0][1];}
+$("clubsTab").onclick=()=>switchType("clubs");$("nationsTab").onclick=()=>switchType("nations");
+function switchType(t){type=t;$("clubsTab").classList.toggle("active",t==="clubs");$("nationsTab").classList.toggle("active",t==="nations");populateTeams();draw()}
+$("teamSelect").onchange=e=>{team=e.target.value;populatePlayers();draw()};
+function rounded(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
+function draw(){
+ const w=900,h=510;ctx.clearRect(0,0,w,h);
+ // stadium night backdrop
+ const sky=ctx.createLinearGradient(0,0,0,260);sky.addColorStop(0,"#071523");sky.addColorStop(1,"#234052");ctx.fillStyle=sky;ctx.fillRect(0,0,w,510);
+ // stands, crowd lights
+ for(let row=0;row<4;row++){ctx.fillStyle=["#142b3b","#1b3545","#102839","#0b2030"][row];ctx.fillRect(0,65+row*31,w,30)}
+ for(let i=0;i<290;i++){let x=(i*71)%900,y=72+((i*37)%112);ctx.fillStyle=["#e4e8d4","#d7ad69","#9cb9c8","#c2d5e1"][i%4];ctx.globalAlpha=.2+(i%5)*.09;ctx.fillRect(x,y,2,2)}ctx.globalAlpha=1;
+ // floodlights
+ [70,830].forEach(x=>{ctx.fillStyle="#dcecff";ctx.shadowColor="#e9f5ff";ctx.shadowBlur=28;ctx.beginPath();ctx.arc(x,42,8,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0});
+ // pitch perspective
+ const grd=ctx.createLinearGradient(0,220,0,510);grd.addColorStop(0,"#26734a");grd.addColorStop(1,"#12472f");ctx.fillStyle=grd;ctx.beginPath();ctx.moveTo(95,220);ctx.lineTo(805,220);ctx.lineTo(900,510);ctx.lineTo(0,510);ctx.closePath();ctx.fill();
+ for(let i=0;i<10;i++){ctx.fillStyle=i%2?"#ffffff08":"#001c1010";ctx.beginPath();ctx.moveTo(95+i*71,220);ctx.lineTo(166+i*71,220);ctx.lineTo(260+i*71,510);ctx.lineTo(160+i*71,510);ctx.closePath();ctx.fill()}
+ ctx.strokeStyle="#d9f1dfaa";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(95,220);ctx.lineTo(805,220);ctx.lineTo(900,510);ctx.lineTo(0,510);ctx.closePath();ctx.stroke();
+ // goal box and goal
+ ctx.fillStyle="#d7e7e4";ctx.fillRect(242,100,416,150);ctx.strokeStyle="#9eb9b5";ctx.lineWidth=2;
+ for(let x=252;x<655;x+=18){ctx.beginPath();ctx.moveTo(x,101);ctx.lineTo(x,250);ctx.stroke()}for(let y=115;y<250;y+=18){ctx.beginPath();ctx.moveTo(243,y);ctx.lineTo(658,y);ctx.stroke()}
+ ctx.strokeStyle="#fff";ctx.lineWidth=9;ctx.strokeRect(238,96,424,157);
+ ctx.strokeStyle="#ffffffaa";ctx.lineWidth=2;ctx.strokeRect(160,220,580,230);
+ // goalkeeper, subtle shadows
+ ctx.save();ctx.translate(keeperX,190);ctx.fillStyle="#0005";ctx.beginPath();ctx.ellipse(0,65,54,12,0,0,Math.PI*2);ctx.fill();
+ ctx.strokeStyle="#e9b28a";ctx.lineWidth=18;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(-20,0);ctx.lineTo(-48,20);ctx.moveTo(20,0);ctx.lineTo(48,20);ctx.stroke();
+ ctx.fillStyle="#f0d02c";rounded(-27,-24,54,74,9);ctx.fill();ctx.fillStyle="#172a3b";ctx.font="bold 24px system-ui";ctx.textAlign="center";ctx.fillText("1",0,20);
+ ctx.fillStyle="#d6a17c";ctx.beginPath();ctx.arc(0,-44,22,0,Math.PI*2);ctx.fill();ctx.fillStyle="#32271f";ctx.beginPath();ctx.arc(0,-52,22,Math.PI,Math.PI*2);ctx.fill();ctx.restore();
+ // player and kit number
+ ctx.save();ctx.translate(450,420);ctx.fillStyle="#0005";ctx.beginPath();ctx.ellipse(0,35,42,10,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=current().color;rounded(-23,-38,46,68,7);ctx.fill();ctx.fillStyle="#fff";ctx.font="bold 20px system-ui";ctx.textAlign="center";ctx.fillText("10",0,4);ctx.fillStyle="#d8a27e";ctx.beginPath();ctx.arc(0,-55,20,0,Math.PI*2);ctx.fill();ctx.fillStyle="#33251d";ctx.beginPath();ctx.arc(0,-62,20,Math.PI,Math.PI*2);ctx.fill();ctx.restore();
+ if(!ball&&live){ctx.strokeStyle="#d7ff68";ctx.lineWidth=3;ctx.beginPath();ctx.arc(aim.x,aim.y,13,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(aim.x-20,aim.y);ctx.lineTo(aim.x+20,aim.y);ctx.moveTo(aim.x,aim.y-20);ctx.lineTo(aim.x,aim.y+20);ctx.stroke()}
+ ctx.font="30px sans-serif";ctx.textAlign="center";ctx.fillText("⚽",ball?ball.x:450,ball?ball.y:390);
+ // subtle HUD badge on pitch
+ ctx.fillStyle="#061522bb";rounded(22,22,190,38,8);ctx.fill();ctx.fillStyle="#fff";ctx.font="bold 13px system-ui";ctx.textAlign="left";ctx.fillText(current().badge+"  ·  "+player,36,46);
+}
+function renderLoop(){if(live&&!ball){keeperX+=keeperDir*.55;if(keeperX>555||keeperX<345)keeperDir*=-1}draw();requestAnimationFrame(renderLoop)}
+canvas.addEventListener("pointerdown",e=>{if(!live||ball)return;const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*900/r.width,y=(e.clientY-r.top)*510/r.height;if(x>245&&x<655&&y>105&&y<245){aim={x,y};$("status").innerHTML="<span>●</span> Ziel gewählt. Jetzt abziehen!";draw()}});
+function start(){goals=0;shots=0;live=true;ball=null;keeperX=450;$("goals").textContent="0";$("attempt").textContent="0/5";$("introOverlay").hidden=true;$("resultOverlay").hidden=true;$("shootBtn").disabled=false;$("status").innerHTML="<span>●</span> Zielen: Tippe auf eine Ecke des Tores.";$("matchSub").textContent=team.toUpperCase()+" · "+player.toUpperCase();aim={x:560,y:135};draw()}
+$("startBtn").onclick=start;$("replayBtn").onclick=start;
+$("shootBtn").onclick=()=>{
+ if(!live||ball)return;shots++;$("attempt").textContent=shots+"/5";$("shootBtn").disabled=true;
+ const sx=450,sy=390,tx=aim.x,ty=aim.y,kx=keeperX,save=Math.hypot(tx-kx,ty-180)<65&&Math.random()<.78;let t=0;ball={x:sx,y:sy};
+ function animate(){t=Math.min(1,t+.04);ball={x:sx+(tx-sx)*t,y:sy+(ty-sy)*t};draw();if(t<1){requestAnimationFrame(animate);return}
+ if(!save&&tx>245&&tx<655&&ty>105&&ty<245){goals++;$("status").innerHTML="<span>GOAL!</span> " + player+" trifft!";}else{$("status").innerHTML="<span>GEHALTEN!</span> Der Keeper pariert."}
+ $("goals").textContent=goals;ball=null;setTimeout(()=>{if(shots===5)finish();else{$("shootBtn").disabled=false;$("status").innerHTML="<span>●</span> Nächster Schuss – such dir eine Ecke."}},850)
+ }animate()
+};
+function finish(){live=false;$("shootBtn").disabled=true;$("resultIcon").textContent=goals>=4?"🏆":"⚽";$("resultTitle").textContent=goals>=4?"LEGENDARY PERFORMANCE":"FULL TIME";$("resultCopy").textContent=`${player} und ${team}: ${goals} Tore aus 5 Versuchen. ${goals>=4?"Eine absolute Top-Leistung!":"Bereit für die Revanche?"}`;$("resultOverlay").hidden=false}
+populateTeams();draw();renderLoop();
+})();
+</script>
+</body></html>
